@@ -136,7 +136,47 @@ Phase 1 ──► Phase 2 ──┬──► Phase 3 ──┐
 - **Phase 10** depends on all of Phases 6-9.
 - **Phase 11** depends on Phase 10 and all prior artifacts.
 
-When delegating to multiple agents in parallel (Phases 3-4 or Phases 6-9), the operator MUST provide each agent with all completed prior artifacts as context.
+When delegating to multiple agents in parallel (Phases 3-4 or Phases 6-9), the operator MUST provide each agent with the completed prior artifacts listed in that phase's prompt.
+
+## Subagent Execution Model
+
+To avoid context overflow, each phase SHOULD be executed by a separate subagent with a clean context window. A parent orchestrator manages phase ordering and passes artifacts between phases.
+
+### Per-Phase Context
+
+Each subagent receives only what it needs:
+
+| Phase | Context Provided |
+|---|---|
+| 1: Reconnaissance | Prompt + policies + repository access |
+| 2: Codebase Analysis | Prompt + policies + Phase 1 artifacts |
+| 3: Business Logic | Prompt + policies + `system-overview.md` + `codebase-structure.md` |
+| 4: Glossary | Prompt + policies + `system-overview.md` + `codebase-structure.md` + `business-logic.md` |
+| 5: Dependencies | Prompt + policies + `codebase-structure.md` + `business-logic.md` + `glossary.md` |
+| 6: API Surface | Prompt + policies + `codebase-structure.md` + `dependency-inventory.md` |
+| 7: Data Model | Prompt + policies + `codebase-structure.md` + `dependency-inventory.md` |
+| 8: Deployment | Prompt + policies + `codebase-structure.md` + `dependency-inventory.md` |
+| 9: Observability | Prompt + policies + `codebase-structure.md` + `dependency-inventory.md` |
+| 10: Risk Assessment | Prompt + policies + all prior artifacts (REQUIRED sections first; see gathering policy Context Budget) |
+| 11: Synthesis | Prompt + policies + all prior artifacts (same context budget rules) |
+
+### Orchestrator Responsibilities
+
+The orchestrator (parent agent or human operator):
+
+1. Collects investigation parameters from the user.
+2. Copies blank templates to the output directory.
+3. Launches each phase as a subagent with the prompt, policies, and required prior artifacts inlined.
+4. After each phase, reads the subagent's output artifacts and checks for escalation items.
+5. Reports phase results to the user before proceeding.
+6. For Phases 10-11 (which need all artifacts), applies the Context Budget rules from the gathering policy: include `[REQUIRED]` sections from all artifacts, `[STANDARD]` sections only for directly relevant artifacts.
+
+### Benefits
+
+- Each subagent gets a focused context window (~10-30K tokens) instead of accumulating the full investigation (~100K+ tokens).
+- Parallel phases (3+4, 6+7+8+9) can run as truly concurrent subagents.
+- A failed or incomplete phase can be re-run without restarting the entire investigation.
+- The orchestrator maintains a lightweight view of progress without carrying investigation details.
 
 ## Escalation Rules
 
