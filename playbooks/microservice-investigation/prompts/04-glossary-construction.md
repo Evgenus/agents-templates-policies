@@ -9,10 +9,12 @@ You are investigating a microservice codebase. This is Phase 4 of an 11-phase in
 - **Repository path**: `{{REPO_PATH}}`
 - **Service name**: `{{SERVICE_NAME}}`
 - **Output directory**: `{{OUTPUT_DIR}}`
+- **Documentation links** (if any): `{{DOC_LINKS}}`
+- **Scope constraints** (if any): `{{SCOPE_CONSTRAINTS}}`
 - **Prior artifacts**: Read all Phase 1-3 artifacts:
-  - `{{OUTPUT_DIR}}/templates/system-overview.md`
-  - `{{OUTPUT_DIR}}/templates/codebase-structure.md`
-  - `{{OUTPUT_DIR}}/templates/business-logic.md`
+  - `{{OUTPUT_DIR}}/artifacts/system-overview.md`
+  - `{{OUTPUT_DIR}}/artifacts/codebase-structure.md`
+  - `{{OUTPUT_DIR}}/artifacts/business-logic.md`
 
 ## Policies
 
@@ -94,7 +96,7 @@ Follow all policies from `policies/gathering-policy.md`, `policies/completeness-
 
 ## Output
 
-Fill `{{OUTPUT_DIR}}/templates/glossary.md`:
+Fill `{{OUTPUT_DIR}}/artifacts/glossary.md`:
 
 - All `[REQUIRED]` sections: domain terms, abbreviations and acronyms.
 - All `[STANDARD]` sections: overloaded terms, external/industry terms, naming conventions.

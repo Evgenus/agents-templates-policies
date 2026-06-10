@@ -1,0 +1,13 @@
+name: lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  playbook-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint playbook consistency
+        run: python3 scripts/lint-playbook.py

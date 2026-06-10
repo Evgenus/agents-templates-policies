@@ -9,7 +9,9 @@ You are investigating a microservice codebase. This is Phase 8 of an 11-phase in
 - **Repository path**: `{{REPO_PATH}}`
 - **Service name**: `{{SERVICE_NAME}}`
 - **Output directory**: `{{OUTPUT_DIR}}`
-- **Prior artifacts**: Read `{{OUTPUT_DIR}}/templates/codebase-structure.md` and `{{OUTPUT_DIR}}/templates/dependency-inventory.md`.
+- **Documentation links** (if any): `{{DOC_LINKS}}`
+- **Scope constraints** (if any): `{{SCOPE_CONSTRAINTS}}`
+- **Prior artifacts**: Read `{{OUTPUT_DIR}}/artifacts/codebase-structure.md` and `{{OUTPUT_DIR}}/artifacts/dependency-inventory.md`.
 
 ## Policies
 
@@ -98,7 +100,7 @@ Follow all policies from `policies/gathering-policy.md`, `policies/completeness-
 
 ## Output
 
-Fill `{{OUTPUT_DIR}}/templates/deployment-and-infra.md`:
+Fill `{{OUTPUT_DIR}}/artifacts/deployment-and-infra.md`:
 
 - All `[REQUIRED]` sections: CI/CD, containerization, environments, secrets, environment variables.
 - All `[STANDARD]` sections: IaC, orchestration, scaling, networking, rollback.

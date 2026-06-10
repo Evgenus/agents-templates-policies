@@ -9,7 +9,9 @@ You are investigating a microservice codebase. This is Phase 2 of an 11-phase in
 - **Repository path**: `{{REPO_PATH}}`
 - **Service name**: `{{SERVICE_NAME}}`
 - **Output directory**: `{{OUTPUT_DIR}}`
-- **Phase 1 artifacts**: Read `{{OUTPUT_DIR}}/templates/system-overview.md` and `{{OUTPUT_DIR}}/templates/codebase-structure.md` from the prior phase.
+- **Documentation links** (if any): `{{DOC_LINKS}}`
+- **Scope constraints** (if any): `{{SCOPE_CONSTRAINTS}}`
+- **Phase 1 artifacts**: Read `{{OUTPUT_DIR}}/artifacts/system-overview.md` and `{{OUTPUT_DIR}}/artifacts/codebase-structure.md` from the prior phase.
 
 ## Policies
 
@@ -78,13 +80,25 @@ Follow all policies from `policies/gathering-policy.md`, `policies/completeness-
 2. Search for TODO, FIXME, HACK, XXX markers and note their density and themes.
 3. Identify any code generation (protobuf, OpenAPI, ORM) and where generated code lives.
 
+### 8. Interface Inventory
+
+1. Enumerate every externally reachable interface, one row each:
+   - HTTP routes (search for route registration patterns of the identified framework).
+   - gRPC methods (from proto files and server registrations).
+   - Event topics published and consumed.
+   - CLI commands.
+   - Scheduled jobs.
+2. Record only: type, method/trigger, path/topic/command, and handler reference. Do NOT analyze schemas, auth, or behavior — Phase 6 deepens this inventory; Phase 3 maps it to use cases.
+3. Apply the gathering policy enumeration thresholds if the list is large (move the full list to an appendix; keep counts in the main body).
+
 ## Output
 
-Update `{{OUTPUT_DIR}}/templates/codebase-structure.md`:
+Update `{{OUTPUT_DIR}}/artifacts/codebase-structure.md`:
 
 - Fill all remaining `[REQUIRED]` and `[STANDARD]` fields.
 - Update the architectural pattern section with evidence.
 - Add module structure and dependency analysis.
+- Fill the interface inventory section.
 - Fill testing and code quality sections.
 - Update YAML front-matter confidence summary.
 
@@ -94,6 +108,7 @@ Update `{{OUTPUT_DIR}}/templates/codebase-structure.md`:
 - [ ] All `[STANDARD]` fields have been attempted
 - [ ] Architectural pattern is identified with evidence from at least 3 file citations
 - [ ] Entrypoints are verified by tracing from build/start config to file
+- [ ] Interface inventory lists every discovered route, topic, CLI command, and scheduled job with a handler reference
 - [ ] Every claim has a source citation and confidence tag
 - [ ] Self-review checklist executed
 - [ ] Phase completion summary produced

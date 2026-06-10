@@ -1,4 +1,5 @@
 ---
+playbook_version: "1.1.0"
 service_name: ""
 investigator: ""
 date: ""
@@ -9,6 +10,7 @@ confidence_summary:
   inferred: 0
   uncertain: 0
   unknown: 0
+  not_applicable: 0
   conflict: 0
 ---
 
@@ -80,6 +82,18 @@ Source:
 | Entrypoint | File | Trigger |
 |---|---|---|
 | <!-- e.g. "HTTP server" --> | <!-- e.g. "src/main.ts" --> | <!-- e.g. "npm start → node dist/main.js" --> |
+
+Source:
+
+### Interface Inventory `[REQUIRED]`
+
+<!-- Every externally reachable interface, one row each: HTTP routes, gRPC methods, event topics
+(published and consumed), CLI commands, scheduled jobs. Record type, method/trigger, path/topic/command,
+and handler reference only — no deeper analysis here. Phase 3 maps this inventory to use cases;
+Phase 6 deepens and verifies it. Apply the gathering policy enumeration thresholds for large lists. -->
+
+| Type | Method / Trigger | Path / Topic / Command | Handler |
+|---|---|---|---|
 
 Source:
 

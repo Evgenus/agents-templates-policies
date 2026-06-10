@@ -9,7 +9,9 @@ You are investigating a microservice codebase. This is Phase 6 of an 11-phase in
 - **Repository path**: `{{REPO_PATH}}`
 - **Service name**: `{{SERVICE_NAME}}`
 - **Output directory**: `{{OUTPUT_DIR}}`
-- **Prior artifacts**: Read `{{OUTPUT_DIR}}/templates/codebase-structure.md` and `{{OUTPUT_DIR}}/templates/dependency-inventory.md`.
+- **Documentation links** (if any): `{{DOC_LINKS}}`
+- **Scope constraints** (if any): `{{SCOPE_CONSTRAINTS}}`
+- **Prior artifacts**: Read `{{OUTPUT_DIR}}/artifacts/codebase-structure.md` and `{{OUTPUT_DIR}}/artifacts/dependency-inventory.md`.
 
 ## Policies
 
@@ -18,6 +20,8 @@ Follow all policies from `policies/gathering-policy.md`, `policies/completeness-
 ## Steps
 
 ### 1. HTTP / REST Endpoint Discovery
+
+Start from the interface inventory in codebase-structure.md (Phase 2): your job is to **verify and deepen** that inventory, not re-discover it from scratch. Flag any route present in code but missing from the inventory (and vice versa) as a discrepancy with a `[conflict]` tag.
 
 1. Search for route registration patterns specific to the framework identified in Phase 2:
    - Express: `router.get`, `router.post`, `app.use`, etc.
@@ -83,7 +87,7 @@ Trace at least one representative endpoint from route registration through the f
 
 ## Output
 
-Fill `{{OUTPUT_DIR}}/templates/api-surface.md`:
+Fill `{{OUTPUT_DIR}}/artifacts/api-surface.md`:
 
 - All `[REQUIRED]` sections: endpoints, events, authentication/authorization.
 - All `[STANDARD]` sections: CLI, scheduled jobs, versioning, consumers, deprecations, schemas.
@@ -92,6 +96,7 @@ Fill `{{OUTPUT_DIR}}/templates/api-surface.md`:
 ## Completion Criteria
 
 - [ ] All HTTP/gRPC endpoints are listed with method, path, and handler
+- [ ] The endpoint list has been reconciled against the Phase 2 interface inventory
 - [ ] All event publish/subscribe interfaces are documented
 - [ ] Authentication and authorization model is described with evidence
 - [ ] At least one endpoint has been traced end-to-end

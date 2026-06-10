@@ -41,6 +41,8 @@ The agent MUST flag potential staleness when:
 | Deprecated dependency versions (major versions behind) | Flag in dependency inventory |
 | CI/CD steps that reference nonexistent files or scripts | Flag as broken pipeline risk |
 
+`[stale-source]` is an annotation, not a confidence tag. It is appended alongside the claim's confidence tag (e.g. `[inferred] [stale-source: last modified 2023-01-15]`) and never replaces it.
+
 ## Contradiction Handling
 
 When two sources provide conflicting information:
@@ -64,7 +66,7 @@ When two sources provide conflicting information:
 At the end of each phase, the agent MUST execute this checklist against each artifact updated in that phase:
 
 ### Structure Check
-- [ ] All `[REQUIRED]` fields are filled or explicitly marked `[unknown]`
+- [ ] All `[REQUIRED]` fields are filled or explicitly marked `[unknown]` or `[not-applicable]`
 - [ ] YAML front-matter is present and metadata fields are populated
 - [ ] No placeholder text (e.g. `<!-- ... -->` prompts) remains in filled fields
 
@@ -83,6 +85,7 @@ At the end of each phase, the agent MUST execute this checklist against each art
 ### Completeness Check
 - [ ] Cross-reference against the completeness policy for the current tier
 - [ ] All `[unknown]` entries include attempted gathering strategies
+- [ ] All `[not-applicable]` entries cite the searches that confirmed the absence
 - [ ] All `[conflict]` entries include both sources and an assessment
 - [ ] All `[uncertain]` entries include the reasoning for low confidence
 
@@ -96,6 +99,7 @@ At the end of each phase, the agent MUST execute this checklist against each art
 - Verify directory layout claims by listing actual directory contents.
 - Verify entrypoints by tracing from the build/start command (package.json scripts, Dockerfile CMD, Makefile targets) to the referenced files.
 - Verify framework claims by checking import statements, not just package manifest.
+- Verify the interface inventory by sampling at least three entries and confirming their registrations exist in code.
 
 ### dependency-inventory.md
 - Verify declared dependencies are actually imported/used in code.
@@ -103,6 +107,7 @@ At the end of each phase, the agent MUST execute this checklist against each art
 - Cross-reference service dependency claims with actual HTTP/gRPC/event client code.
 
 ### api-surface.md
+- Cross-check the endpoint list against the Phase 2 interface inventory in codebase-structure.md; investigate and document any additions or removals.
 - Trace at least one endpoint from route registration through middleware to handler to response.
 - Verify auth claims by finding middleware application on routes, not just middleware definition.
 - Verify event contracts by finding both publish and subscribe code for at least one event.

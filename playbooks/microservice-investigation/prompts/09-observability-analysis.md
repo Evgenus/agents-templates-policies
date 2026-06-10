@@ -9,7 +9,9 @@ You are investigating a microservice codebase. This is Phase 9 of an 11-phase in
 - **Repository path**: `{{REPO_PATH}}`
 - **Service name**: `{{SERVICE_NAME}}`
 - **Output directory**: `{{OUTPUT_DIR}}`
-- **Prior artifacts**: Read `{{OUTPUT_DIR}}/templates/codebase-structure.md` and `{{OUTPUT_DIR}}/templates/dependency-inventory.md`.
+- **Documentation links** (if any): `{{DOC_LINKS}}`
+- **Scope constraints** (if any): `{{SCOPE_CONSTRAINTS}}`
+- **Prior artifacts**: Read `{{OUTPUT_DIR}}/artifacts/codebase-structure.md` and `{{OUTPUT_DIR}}/artifacts/dependency-inventory.md`.
 
 ## Policies
 
@@ -65,7 +67,7 @@ Follow all policies from `policies/gathering-policy.md`, `policies/completeness-
    - Basic liveness (just returns 200)
    - Readiness (checks database connection, cache availability, etc.)
    - Deep health (checks all dependencies)
-3. Cross-reference with Kubernetes probe configuration from Phase 8 (if available).
+3. Record the discovered health endpoints precisely — Phase 11 reconciles them against the orchestration probe configuration from deployment-and-infra.md (Phase 8 runs in parallel with this phase, so do not read its output here).
 
 ### 5. Alerting Analysis
 
@@ -97,7 +99,7 @@ Based on findings, identify:
 
 ## Output
 
-Fill `{{OUTPUT_DIR}}/templates/observability.md`:
+Fill `{{OUTPUT_DIR}}/artifacts/observability.md`:
 
 - All `[REQUIRED]` sections: logging framework, metrics instrumentation, key metrics, health checks.
 - All `[STANDARD]` sections: log levels, tracing, dashboards, alerting, error tracking.

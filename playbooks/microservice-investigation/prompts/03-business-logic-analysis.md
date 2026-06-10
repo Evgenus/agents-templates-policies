@@ -9,7 +9,9 @@ You are investigating a microservice codebase. This is Phase 3 of an 11-phase in
 - **Repository path**: `{{REPO_PATH}}`
 - **Service name**: `{{SERVICE_NAME}}`
 - **Output directory**: `{{OUTPUT_DIR}}`
-- **Prior artifacts**: Read `{{OUTPUT_DIR}}/templates/system-overview.md` and `{{OUTPUT_DIR}}/templates/codebase-structure.md` from Phases 1-2.
+- **Documentation links** (if any): `{{DOC_LINKS}}`
+- **Scope constraints** (if any): `{{SCOPE_CONSTRAINTS}}`
+- **Prior artifacts**: Read `{{OUTPUT_DIR}}/artifacts/system-overview.md` and `{{OUTPUT_DIR}}/artifacts/codebase-structure.md` from Phases 1-2.
 
 ## Policies
 
@@ -25,7 +27,7 @@ Follow all policies from `policies/gathering-policy.md`, `policies/completeness-
 
 ### 2. Use Case Discovery
 
-1. From the entrypoints identified in Phase 2, list every API endpoint, event handler, CLI command, and scheduled job.
+1. Take the interface inventory from codebase-structure.md (Phase 2) as the authoritative list of API endpoints, event handlers, CLI commands, and scheduled jobs. Verify it against the code; flag any interface found in code but missing from the inventory (or vice versa) as a discrepancy.
 2. For each entrypoint, trace the handling path inward through the code layers:
    - What controller/handler receives the request?
    - What service/usecase function does it call?
@@ -109,7 +111,7 @@ If pursuing the `[EXTENDED]` tier:
 
 ## Output
 
-Fill `{{OUTPUT_DIR}}/templates/business-logic.md`:
+Fill `{{OUTPUT_DIR}}/artifacts/business-logic.md`:
 
 - All `[REQUIRED]` sections: use cases, business rules, state machines.
 - All `[STANDARD]` sections: algorithms, domain events, scheduled processes.
@@ -118,7 +120,7 @@ Fill `{{OUTPUT_DIR}}/templates/business-logic.md`:
 ## Completion Criteria
 
 - [ ] At least one use case has been fully documented with main flow, error scenarios, and postconditions
-- [ ] All entrypoints from the codebase-structure artifact have been accounted for (mapped to a use case or documented as thin wrappers with no significant business logic)
+- [ ] All interface inventory entries from the codebase-structure artifact have been accounted for (mapped to a use case or documented as thin wrappers with no significant business logic)
 - [ ] All business rules are documented with implementation location and violation behavior
 - [ ] All stateful entities have their state machines documented with transitions and guards
 - [ ] Domain events are documented with business meaning, not just technical names

@@ -8,6 +8,8 @@ alwaysApply: false
 
 When the user asks you to investigate, analyze, or adopt a microservice, you act as an **orchestrator**. You do NOT execute investigation phases yourself. Instead, you delegate each phase to a separate subagent to keep context focused and avoid overflow.
 
+The single source of truth for phase ordering, dependencies, and per-phase context is `playbooks/microservice-investigation/PLAYBOOK.md`. This rule tells you how to orchestrate; the playbook tells you what to run.
+
 ## How to Start
 
 Collect these values from the user:
@@ -20,8 +22,8 @@ Collect these values from the user:
 
 Then:
 
-1. Read `playbooks/microservice-investigation/PLAYBOOK.md` for the phase order and execution model.
-2. Copy the artifact templates from `playbooks/microservice-investigation/templates/` to `{{OUTPUT_DIR}}/templates/`.
+1. Read `playbooks/microservice-investigation/PLAYBOOK.md` — specifically the **Execution Model** (phase order, parallel branches) and **Subagent Execution Model** (per-phase context table) sections.
+2. Copy the blank artifact templates from `playbooks/microservice-investigation/templates/` to `{{OUTPUT_DIR}}/artifacts/`.
 3. Begin executing phases by delegating to subagents as described below.
 
 ## Subagent Delegation
@@ -32,28 +34,14 @@ Each phase runs in its own subagent. This ensures each phase gets a clean contex
 
 For each phase, construct the subagent's task description by combining:
 
-1. **The phase prompt** — read `playbooks/microservice-investigation/prompts/NN-<name>.md` and replace template variables (`{{REPO_PATH}}`, `{{SERVICE_NAME}}`, `{{OUTPUT_DIR}}`, `{{DOC_LINKS}}`, `{{SCOPE_CONSTRAINTS}}`) with the user's values.
+1. **The phase prompt** — read `playbooks/microservice-investigation/prompts/NN-<name>.md` and replace template variables (`{{REPO_PATH}}`, `{{SERVICE_NAME}}`, `{{OUTPUT_DIR}}`, `{{DOC_LINKS}}`, `{{SCOPE_CONSTRAINTS}}`) with the user's values. Every phase prompt receives the documentation links and scope constraints — scope exclusions apply to all phases, not just reconnaissance.
 
 2. **Policies (inline)** — read all three policy files and include their full text in the subagent prompt. The subagent cannot be assumed to read them on its own since that consumes its context budget:
    - `playbooks/microservice-investigation/policies/gathering-policy.md`
    - `playbooks/microservice-investigation/policies/completeness-policy.md`
    - `playbooks/microservice-investigation/policies/verification-policy.md`
 
-3. **Prior artifacts (only what the phase needs)** — read the completed artifacts listed in the phase prompt's "Prior artifacts" section and include their contents. The per-phase context map is:
-
-   | Phase | Prior Artifacts to Include |
-   |---|---|
-   | 1 | None |
-   | 2 | `system-overview.md`, `codebase-structure.md` (partial from Phase 1) |
-   | 3 | `system-overview.md`, `codebase-structure.md` |
-   | 4 | `system-overview.md`, `codebase-structure.md`, `business-logic.md` |
-   | 5 | `codebase-structure.md`, `business-logic.md`, `glossary.md` |
-   | 6 | `codebase-structure.md`, `dependency-inventory.md` |
-   | 7 | `codebase-structure.md`, `dependency-inventory.md` |
-   | 8 | `codebase-structure.md`, `dependency-inventory.md` |
-   | 9 | `codebase-structure.md`, `dependency-inventory.md` |
-   | 10 | All artifacts (use Context Budget rules from gathering policy: read REQUIRED sections first, STANDARD only for relevant artifacts) |
-   | 11 | All artifacts (same context budget rules) |
+3. **Prior artifacts (only what the phase needs)** — include the contents of the completed artifacts listed for that phase in the PLAYBOOK's **Per-Phase Context** table (read them from `{{OUTPUT_DIR}}/artifacts/`). For Phases 10-11, apply the Context Budget rules from the gathering policy: `[REQUIRED]` sections from all artifacts first, `[STANDARD]` sections only for directly relevant artifacts.
 
 ### Launching the Subagent
 
@@ -66,6 +54,8 @@ Use the Task tool with `subagent_type="generalPurpose"` for each phase. The prom
 - Repository path: <value>
 - Service name: <value>
 - Output directory: <value>
+- Documentation links: <value or "None">
+- Scope constraints: <value or "None">
 
 ## Policies
 <full text of all three policies>
@@ -79,27 +69,15 @@ Use the Task tool with `subagent_type="generalPurpose"` for each phase. The prom
 
 ### After Each Subagent Completes
 
-1. Read the artifacts the subagent wrote to `{{OUTPUT_DIR}}/templates/`.
-2. Verify the subagent reported: artifacts updated, completeness tier, any `[unknown]` or `[conflict]` items.
+1. Read the artifacts the subagent wrote to `{{OUTPUT_DIR}}/artifacts/`.
+2. Verify the subagent reported: artifacts updated, completeness tier, any `[unknown]`, `[not-applicable]`, or `[conflict]` items.
 3. Report the phase results to the user briefly: phase completed, key findings, any escalation items.
 4. If the subagent hit an escalation trigger, stop and present it to the user before proceeding.
 5. Proceed to the next phase(s) in the execution order.
 
 ## Execution Order and Parallelism
 
-```
-Phase 1 ──► Phase 2 ──┬──► Phase 3 ──┐
-                       └──► Phase 4 ──┤
-                                      ▼
-                              Phase 5 ──┬──► Phase 6 ──┐
-                                        ├──► Phase 7 ──┤
-                                        ├──► Phase 8 ──├──► Phase 10 ──► Phase 11
-                                        └──► Phase 9 ──┘
-```
-
-- **Phases 1, 2, 5, 10, 11**: Run sequentially (each depends on the previous).
-- **Phases 3 + 4**: Launch as two parallel subagents after Phase 2 completes.
-- **Phases 6 + 7 + 8 + 9**: Launch as four parallel subagents after Phase 5 completes.
+Follow the **Execution Model** in PLAYBOOK.md. Summary: Phases 1, 2, 10, 11 are sequential gates; after Phase 2, the domain branch (Phase 3 then Phase 4) and the dependency branch (Phase 5 then Phases 6+7+8+9 in parallel) may run concurrently.
 
 When launching parallel subagents, send all Task tool calls in a single message so they run concurrently.
 
@@ -108,10 +86,10 @@ When launching parallel subagents, send all Task tool calls in a single message 
 | User Says | Action |
 |---|---|
 | "Investigate service at /path" | Run all 11 phases in order, reporting after each |
-| "Run phase N" | Run only that phase (read its required prior artifacts from output dir) |
+| "Run phase N" | Run only that phase (read its required prior artifacts from the output dir) |
 | "Run phases N-M" | Run the specified range, respecting dependencies |
 | "Continue" / "Next phase" | Run the next phase in sequence |
-| "Run parallel phases" | Launch the next parallelizable group (3+4 or 6+7+8+9) |
+| "Run parallel phases" | Launch the next parallelizable group per the PLAYBOOK execution model |
 
 ## Key Rules
 

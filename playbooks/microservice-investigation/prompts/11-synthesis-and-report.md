@@ -9,7 +9,9 @@ You are investigating a microservice codebase. This is Phase 11, the final phase
 - **Repository path**: `{{REPO_PATH}}`
 - **Service name**: `{{SERVICE_NAME}}`
 - **Output directory**: `{{OUTPUT_DIR}}`
-- **All prior artifacts**: Read every artifact from `{{OUTPUT_DIR}}/templates/`.
+- **Documentation links** (if any): `{{DOC_LINKS}}`
+- **Scope constraints** (if any): `{{SCOPE_CONSTRAINTS}}`
+- **All prior artifacts**: Read every artifact from `{{OUTPUT_DIR}}/artifacts/`.
 
 ## Policies
 
@@ -22,7 +24,7 @@ Follow all policies from `policies/gathering-policy.md`, `policies/completeness-
 Using information gathered across all prior phases, fill `runbook.md`:
 
 1. **Build section**: From codebase-structure.md (build commands, prerequisites) and deployment-and-infra.md (Dockerfile build stages).
-2. **Run locally section**: From codebase-structure.md (start commands), deployment-and-infra.md (docker-compose, environment variables), and data-model.md (local database setup).
+2. **Run locally section**: From codebase-structure.md (start commands), deployment-and-infra.md (docker-compose, environment variables), and data-model.md (data stores, migrations, seed/fixture data).
 3. **Run tests section**: From codebase-structure.md (test framework, test commands).
 4. **Deploy section**: From deployment-and-infra.md (CI/CD pipeline, deploy steps).
 5. **Rollback section**: From deployment-and-infra.md (rollback procedure).
@@ -52,7 +54,7 @@ Perform a final consistency sweep across ALL artifacts:
 6. **Data stores**: All stores in data-model appear in dependency-inventory and have connection config in deployment-and-infra.
 7. **State machines**: Entity states in business-logic.md are consistent with status/state fields documented in data-model.md.
 8. **Events**: Events in api-surface.md match domain events documented in business-logic.md (technical contract matches business meaning).
-9. **Health checks**: Health check endpoints in observability match route registrations in api-surface.
+9. **Health checks**: Health check endpoints in observability match route registrations in api-surface AND the orchestration probe configuration in deployment-and-infra (Phases 8 and 9 run in parallel, so this reconciliation happens here).
 10. Fix any inconsistencies found. If the fix changes a prior artifact, append to its Amendments section.
 
 ### 4. Completeness Audit
@@ -81,24 +83,24 @@ Create a summary section at the end of `system-overview.md` (or as a separate se
 
 Produce a table of all artifacts with their completeness status:
 
-| Artifact | Completeness Tier | Verified | Inferred | Uncertain | Unknown | Conflict |
-|---|---|---|---|---|---|---|
-| system-overview.md | | | | | | |
-| codebase-structure.md | | | | | | |
-| business-logic.md | | | | | | |
-| glossary.md | | | | | | |
-| dependency-inventory.md | | | | | | |
-| api-surface.md | | | | | | |
-| data-model.md | | | | | | |
-| deployment-and-infra.md | | | | | | |
-| observability.md | | | | | | |
-| risk-register.md | | | | | | |
-| runbook.md | | | | | | |
+| Artifact | Completeness Tier | Verified | Inferred | Uncertain | Unknown | Not Applicable | Conflict |
+|---|---|---|---|---|---|---|---|
+| system-overview.md | | | | | | | |
+| codebase-structure.md | | | | | | | |
+| business-logic.md | | | | | | | |
+| glossary.md | | | | | | | |
+| dependency-inventory.md | | | | | | | |
+| api-surface.md | | | | | | | |
+| data-model.md | | | | | | | |
+| deployment-and-infra.md | | | | | | | |
+| observability.md | | | | | | | |
+| risk-register.md | | | | | | | |
+| runbook.md | | | | | | | |
 
 ## Output
 
-1. Fill `{{OUTPUT_DIR}}/templates/runbook.md` — complete.
-2. Update `{{OUTPUT_DIR}}/templates/system-overview.md` — finalized with executive summary.
+1. Fill `{{OUTPUT_DIR}}/artifacts/runbook.md` — complete.
+2. Update `{{OUTPUT_DIR}}/artifacts/system-overview.md` — finalized with executive summary.
 3. Update YAML front-matter in ALL artifacts with final confidence counts.
 4. Append Amendments to any artifacts where cross-artifact consistency checks revealed corrections.
 

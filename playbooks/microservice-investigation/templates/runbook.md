@@ -1,14 +1,16 @@
 ---
+playbook_version: "1.1.0"
 service_name: ""
 investigator: ""
 date: ""
-phase: "9"
+phase: "11"
 completeness_tier: ""
 confidence_summary:
   verified: 0
   inferred: 0
   uncertain: 0
   unknown: 0
+  not_applicable: 0
   conflict: 0
 ---
 

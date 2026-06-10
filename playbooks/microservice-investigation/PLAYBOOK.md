@@ -1,5 +1,7 @@
 # Microservice Investigation Playbook
 
+**Version**: 1.1.0 — see [CHANGELOG](CHANGELOG.md). Filled artifacts record this version in their `playbook_version` front-matter field.
+
 ## Purpose
 
 This playbook defines a structured, repeatable process for investigating a brownfield or legacy microservice. It is designed for execution by an AI coding agent, with human oversight at defined checkpoints.
@@ -64,7 +66,7 @@ The investigation proceeds in eleven phases. Each phase produces one or more art
 ### Phase 5: Dependency Mapping
 
 - **Goal**: Inventory all internal and external dependencies — libraries, services, infrastructure, external APIs.
-- **Inputs**: Phase 2-4 artifacts, dependency manifests, import analysis.
+- **Inputs**: Phase 2 artifacts, dependency manifests, import analysis.
 - **Outputs**: `dependency-inventory.md` (complete).
 - **Verification**: Compare manifest-declared deps against actually-imported deps; flag discrepancies.
 - **Prompt**: `prompts/05-dependency-mapping.md`
@@ -120,23 +122,22 @@ The investigation proceeds in eleven phases. Each phase produces one or more art
 ## Execution Model
 
 ```
-Phase 1 ──► Phase 2 ──┬──► Phase 3 ──┐
-                       └──► Phase 4 ──┤
-                                      ▼
-                              Phase 5 ──┬──► Phase 6 ──┐
-                                        ├──► Phase 7 ──┤
-                                        ├──► Phase 8 ──├──► Phase 10 ──► Phase 11
-                                        └──► Phase 9 ──┘
+Phase 1 ──► Phase 2 ──┬──► Phase 3 ──► Phase 4 ─────────┐
+                      └──► Phase 5 ──┬──► Phase 6 ──┐   │
+                                     ├──► Phase 7 ──┤   ▼
+                                     ├──► Phase 8 ──┼──► Phase 10 ──► Phase 11
+                                     └──► Phase 9 ──┘
 ```
 
 - **Phases 1-2** are strictly sequential. Each builds on the prior phase's output.
-- **Phases 3-4** MAY run in parallel after Phase 2. They depend on Phase 2 but not on each other.
-- **Phase 5** depends on both Phases 3 and 4.
+- After Phase 2, two branches MAY run in parallel:
+  - **Domain branch**: Phase 3, then Phase 4 (the glossary harvests terms from `business-logic.md`, so Phase 4 depends on Phase 3).
+  - **Dependency branch**: Phase 5, then Phases 6-9.
 - **Phases 6-9** MAY run in parallel. They depend on Phase 5 but not on each other.
-- **Phase 10** depends on all of Phases 6-9.
+- **Phase 10** depends on all of Phases 4 and 6-9 (it reads every prior artifact).
 - **Phase 11** depends on Phase 10 and all prior artifacts.
 
-When delegating to multiple agents in parallel (Phases 3-4 or Phases 6-9), the operator MUST provide each agent with the completed prior artifacts listed in that phase's prompt.
+When delegating to multiple agents in parallel (Phase 3 alongside Phase 5, or Phases 6-9), the operator MUST provide each agent with the completed prior artifacts listed in that phase's prompt.
 
 ## Subagent Execution Model
 
@@ -152,7 +153,7 @@ Each subagent receives only what it needs:
 | 2: Codebase Analysis | Prompt + policies + Phase 1 artifacts |
 | 3: Business Logic | Prompt + policies + `system-overview.md` + `codebase-structure.md` |
 | 4: Glossary | Prompt + policies + `system-overview.md` + `codebase-structure.md` + `business-logic.md` |
-| 5: Dependencies | Prompt + policies + `codebase-structure.md` + `business-logic.md` + `glossary.md` |
+| 5: Dependencies | Prompt + policies + `codebase-structure.md` |
 | 6: API Surface | Prompt + policies + `codebase-structure.md` + `dependency-inventory.md` |
 | 7: Data Model | Prompt + policies + `codebase-structure.md` + `dependency-inventory.md` |
 | 8: Deployment | Prompt + policies + `codebase-structure.md` + `dependency-inventory.md` |
@@ -165,7 +166,7 @@ Each subagent receives only what it needs:
 The orchestrator (parent agent or human operator):
 
 1. Collects investigation parameters from the user.
-2. Copies blank templates to the output directory.
+2. Copies blank templates to the output directory's `artifacts/` subfolder.
 3. Launches each phase as a subagent with the prompt, policies, and required prior artifacts inlined.
 4. After each phase, reads the subagent's output artifacts and checks for escalation items.
 5. Reports phase results to the user before proceeding.
@@ -174,7 +175,7 @@ The orchestrator (parent agent or human operator):
 ### Benefits
 
 - Each subagent gets a focused context window (~10-30K tokens) instead of accumulating the full investigation (~100K+ tokens).
-- Parallel phases (3+4, 6+7+8+9) can run as truly concurrent subagents.
+- Parallel branches (3→4 alongside 5, then 6+7+8+9) can run as truly concurrent subagents.
 - A failed or incomplete phase can be re-run without restarting the entire investigation.
 - The orchestrator maintains a lightweight view of progress without carrying investigation details.
 
@@ -193,7 +194,7 @@ The agent MUST stop and request human input when:
 
 ## Artifact Management
 
-- All filled templates are written to the operator-provided output directory, preserving the `templates/` subfolder structure.
+- All filled templates are written to the operator-provided output directory under an `artifacts/` subfolder (e.g. `{{OUTPUT_DIR}}/artifacts/system-overview.md`). The blank templates in this playbook's `templates/` folder are never modified.
 - Each artifact MUST retain its YAML front-matter with updated metadata (investigator, date, confidence summary).
 - The agent MUST NOT delete or overwrite prior phase outputs. If corrections are needed, the agent appends an `## Amendments` section.
 - At the end of each phase, the agent reports: which artifacts were updated, completeness tier achieved, and any `[unknown]`/`[conflict]` items.
@@ -205,3 +206,5 @@ The agent MUST stop and request human input when:
 - [Verification Policy](policies/verification-policy.md)
 - [Templates](templates/)
 - [Prompts](prompts/)
+- [Examples](examples/) — golden filled artifacts showing expected granularity, citations, and tags
+- [CHANGELOG](CHANGELOG.md)

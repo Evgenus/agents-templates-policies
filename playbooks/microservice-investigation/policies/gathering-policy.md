@@ -200,6 +200,8 @@ When information cannot be found:
 3. If the information is `[REQUIRED]`, flag it in the phase completion report for operator attention.
 4. Suggest where the information might be found outside the current scope.
 
+If the investigation conclusively shows the capability does not exist (e.g. no gRPC interface after searching for `.proto` files and server registrations), mark the field `[not-applicable]` with the searches performed — do **not** use `[unknown]` for confirmed absences.
+
 Example:
 
 ```markdown

@@ -19,7 +19,7 @@ Provide the following before executing:
 You MUST follow these policies throughout the investigation:
 
 - **Gathering Policy**: Every claim must cite a source file and line range. Prefer code over documentation. Do not modify the target repository. See `policies/gathering-policy.md` for full rules.
-- **Completeness Policy**: Every field must carry a confidence tag (`[verified]`, `[inferred]`, `[uncertain]`, `[unknown]`, `[conflict]`). Fill all `[REQUIRED]` fields or mark them `[unknown]` with justification. See `policies/completeness-policy.md`.
+- **Completeness Policy**: Every field must carry a confidence tag (`[verified]`, `[inferred]`, `[uncertain]`, `[unknown]`, `[not-applicable]`, `[conflict]`). Fill all `[REQUIRED]` fields or mark them `[unknown]` (could not determine) or `[not-applicable]` (confirmed absent) with justification. See `policies/completeness-policy.md`.
 - **Verification Policy**: Cross-reference claims when possible. Flag staleness and contradictions. See `policies/verification-policy.md`.
 
 ## Steps
@@ -36,7 +36,7 @@ Execute these steps in order:
 
 1. Identify all root-level configuration files: Dockerfile, Makefile, package.json, go.mod, requirements.txt, pom.xml, build.gradle, Cargo.toml, or similar.
 2. Read each one. Extract: language version, framework, build commands, start command.
-3. Identify CI/CD configuration files (.github/workflows/, .gitlab-ci.yml, Jenkinsfile, etc.). Note their presence but do not deeply analyze yet — that is Phase 6.
+3. Identify CI/CD configuration files (.github/workflows/, .gitlab-ci.yml, Jenkinsfile, etc.). Note their presence but do not deeply analyze yet — that is Phase 8.
 
 ### 3. Entrypoint Tracing
 
@@ -55,7 +55,7 @@ Execute these steps in order:
 1. Search for HTTP/gRPC/message client instantiations to identify downstream dependencies.
 2. Search for route/handler registrations to identify what APIs this service exposes.
 3. Search for event/message consumer registrations.
-4. This is a quick scan — detailed analysis happens in Phases 4-5.
+4. This is a quick scan — detailed analysis happens in Phases 5-6.
 
 ### 6. Documentation Inventory
 
@@ -65,7 +65,7 @@ Execute these steps in order:
 
 ## Output
 
-Fill the following templates and write them to `{{OUTPUT_DIR}}/templates/`:
+Fill the following templates and write them to `{{OUTPUT_DIR}}/artifacts/`:
 
 1. **system-overview.md** — Fill: Service name, Purpose, Business domain, Repository location, Context diagram (preliminary upstream/downstream list). Other fields may remain as placeholders.
 2. **codebase-structure.md** — Fill: Primary language and version, Framework, Directory structure, Key files, Entrypoints, Build commands. Architecture pattern and deeper fields are preliminary — they will be refined in Phase 2.

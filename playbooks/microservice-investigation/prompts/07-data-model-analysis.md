@@ -9,7 +9,9 @@ You are investigating a microservice codebase. This is Phase 7 of an 11-phase in
 - **Repository path**: `{{REPO_PATH}}`
 - **Service name**: `{{SERVICE_NAME}}`
 - **Output directory**: `{{OUTPUT_DIR}}`
-- **Prior artifacts**: Read `{{OUTPUT_DIR}}/templates/codebase-structure.md` and `{{OUTPUT_DIR}}/templates/dependency-inventory.md` (specifically the infrastructure dependencies section).
+- **Documentation links** (if any): `{{DOC_LINKS}}`
+- **Scope constraints** (if any): `{{SCOPE_CONSTRAINTS}}`
+- **Prior artifacts**: Read `{{OUTPUT_DIR}}/artifacts/codebase-structure.md` and `{{OUTPUT_DIR}}/artifacts/dependency-inventory.md` (specifically the infrastructure dependencies section).
 
 ## Policies
 
@@ -72,7 +74,7 @@ Follow all policies from `policies/gathering-policy.md`, `policies/completeness-
 
 ## Output
 
-Fill `{{OUTPUT_DIR}}/templates/data-model.md`:
+Fill `{{OUTPUT_DIR}}/artifacts/data-model.md`:
 
 - All `[REQUIRED]` sections: data stores, schema definitions, migrations, migration strategy.
 - All `[STANDARD]` sections: relationships, data flow, caching, seed data.

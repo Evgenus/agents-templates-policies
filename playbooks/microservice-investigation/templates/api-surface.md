@@ -1,14 +1,16 @@
 ---
+playbook_version: "1.1.0"
 service_name: ""
 investigator: ""
 date: ""
-phase: "4"
+phase: "6"
 completeness_tier: ""
 confidence_summary:
   verified: 0
   inferred: 0
   uncertain: 0
   unknown: 0
+  not_applicable: 0
   conflict: 0
 ---
 
@@ -25,7 +27,9 @@ Source:
 
 ## gRPC Services `[REQUIRED]`
 
-<!-- If the service exposes gRPC, list services and methods. Reference the proto files. -->
+<!-- If the service exposes gRPC, list services and methods. Reference the proto files.
+If the service exposes no gRPC interface, mark this section `[not-applicable]` and cite the
+searches performed (e.g. no .proto files, no gRPC server registration). -->
 
 | Service | Method | Request Type | Response Type | Description |
 |---|---|---|---|---|

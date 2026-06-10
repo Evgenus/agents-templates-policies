@@ -9,7 +9,9 @@ You are investigating a microservice codebase. This is Phase 5 of an 11-phase in
 - **Repository path**: `{{REPO_PATH}}`
 - **Service name**: `{{SERVICE_NAME}}`
 - **Output directory**: `{{OUTPUT_DIR}}`
-- **Prior artifacts**: Read `{{OUTPUT_DIR}}/templates/codebase-structure.md` from Phase 2.
+- **Documentation links** (if any): `{{DOC_LINKS}}`
+- **Scope constraints** (if any): `{{SCOPE_CONSTRAINTS}}`
+- **Prior artifacts**: Read `{{OUTPUT_DIR}}/artifacts/codebase-structure.md` from Phase 2.
 
 ## Policies
 
@@ -68,7 +70,7 @@ Follow all policies from `policies/gathering-policy.md`, `policies/completeness-
 
 ## Output
 
-Fill `{{OUTPUT_DIR}}/templates/dependency-inventory.md`:
+Fill `{{OUTPUT_DIR}}/artifacts/dependency-inventory.md`:
 
 - All `[REQUIRED]` sections: runtime libraries, internal services, infrastructure, external APIs.
 - All `[STANDARD]` sections: dev dependencies, vulnerabilities, freshness, management approach.

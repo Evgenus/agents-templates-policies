@@ -9,7 +9,9 @@ You are investigating a microservice codebase. This is Phase 10 of an 11-phase i
 - **Repository path**: `{{REPO_PATH}}`
 - **Service name**: `{{SERVICE_NAME}}`
 - **Output directory**: `{{OUTPUT_DIR}}`
-- **Prior artifacts**: Read ALL completed artifacts from `{{OUTPUT_DIR}}/templates/`:
+- **Documentation links** (if any): `{{DOC_LINKS}}`
+- **Scope constraints** (if any): `{{SCOPE_CONSTRAINTS}}`
+- **Prior artifacts**: Read ALL completed artifacts from `{{OUTPUT_DIR}}/artifacts/`:
   - `system-overview.md`
   - `codebase-structure.md`
   - `business-logic.md`
@@ -26,14 +28,7 @@ Follow all policies from `policies/gathering-policy.md`, `policies/completeness-
 
 ## Severity Rubric
 
-Use this rubric consistently:
-
-| Severity | Criteria |
-|---|---|
-| **Critical** | Could cause complete service outage, data loss, or security breach. Requires immediate attention. |
-| **High** | Could cause significant service degradation, data integrity issues, or compliance violations. Should be addressed in the current planning cycle. |
-| **Medium** | Affects maintainability, developer productivity, or creates conditions for future incidents. Should be planned for remediation. |
-| **Low** | Cosmetic, minor inefficiency, or theoretical risk with low probability. Address opportunistically. |
+Use the severity rubric and risk categories defined at the top of the `risk-register.md` template (the single source of truth for both). Apply them consistently across all risk entries.
 
 ## Steps
 
@@ -129,7 +124,7 @@ For each identified risk:
 1. Assign a unique ID (RISK-001, RISK-002, etc.).
 2. Assign a category (Security, Reliability, Maintainability, Operational, Compliance).
 3. Write a clear description.
-4. Assign severity using the rubric above with a brief justification.
+4. Assign severity using the template's rubric with a brief justification.
 5. Cite the evidence: which artifact, which source file/line.
 6. Note any existing mitigation.
 7. Recommend an action if clear.
@@ -142,7 +137,7 @@ For each identified risk:
 
 ## Output
 
-Fill `{{OUTPUT_DIR}}/templates/risk-register.md`:
+Fill `{{OUTPUT_DIR}}/artifacts/risk-register.md`:
 
 - All `[REQUIRED]` fields for each risk entry.
 - Summary tables by severity and category.
